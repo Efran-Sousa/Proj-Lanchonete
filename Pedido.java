@@ -3,35 +3,32 @@ import java.util.ArrayList;
 
 public class Pedido {
     private String nomeCliente;
-    private double taxaDeServico;
-    private List<Prato> itensConsumidos;
+    private List<ItemPedido> itensConsumidos;
 
-    public Pedido(String nomeCliente, double taxaDeServico) {
+    public Pedido(String nomeCliente) {
         this.nomeCliente = nomeCliente;
-        this.taxaDeServico = taxaDeServico;
         this.itensConsumidos = new ArrayList<>();
     }
 
-    public void adicionarItem(Prato item) {
+    public void adicionarItem(ItemPedido item) {
         itensConsumidos.add(item);
     }
 
     public double calcularTotal() {
         double total = 0;
-        for (Prato item : itensConsumidos) {
+        for (ItemPedido item : itensConsumidos) {
             total += item.getPrecoVenda();
         }
-        return total + taxaDeServico;
+        return total;
     }
 
     public void mostrarFatura() {
         System.out.println("------- ProgLanches -------");
         System.out.println("Cliente: " + nomeCliente);
         System.out.println("Itens consumidos:");
-        for (Prato item : itensConsumidos) {
+        for (ItemPedido item : itensConsumidos) {
             System.out.println("- " + item.descricao() + " (R$" + item.getPrecoVenda() + ")");
         }
-        System.out.println("Taxa de serviço: R$" + taxaDeServico);
         System.out.println("Total: R$" + calcularTotal());
     }
 

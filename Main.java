@@ -1,5 +1,3 @@
-
-import java.util.Date;
 import java.util.Scanner;
 
 public class Main {
@@ -31,31 +29,27 @@ public class Main {
 
                 switch (opcao) {
                     case 1:
-                        adicionarPizza();
-                        break;
-                    case 2:
                         adicionarLanche();
                         break;
-                    case 3:
+                    case 2:
                         adicionarSalgadinho();
                         break;
-                    case 4:
+                    case 3:
                         if (pedidoAtual != null) {
                             pedidoAtual.mostrarFatura();
                         }
                         break;
-                    case 5:
+                    case 4:
                         finalizarPedido();
                         break;
                     case 0:
                         continuar = false;
+                        System.out.println("Sistema encerrado!");
                         break;
                     default:
                         System.out.println("Opção inválida!");
                 }
             }
-            
-            scanner.close();
             
         } catch (IllegalArgumentException e) {
             System.out.println("Erro: " + e.getMessage());
@@ -66,86 +60,46 @@ public class Main {
         System.out.println("\n=== Novo Pedido ===");
         System.out.println("Digite o nome do cliente:");
         String nomeCliente = scanner.nextLine();
-        System.out.println("Digite a taxa de serviço:");
-        double taxaServico = scanner.nextDouble();
-        scanner.nextLine(); // Limpar buffer
         
-        pedidoAtual = new Pedido(nomeCliente, taxaServico);
-    }
-
-    private static void adicionarPizza() {
-        System.out.println("\n=== Adicionar Pizza ===");
-        System.out.println("Digite o preço da pizza:");
-        double preco = scanner.nextDouble();
-        scanner.nextLine(); // Limpar buffer
-        
-        System.out.println("Digite o recheio:");
-        String recheio = scanner.nextLine();
-        
-        System.out.println("Digite o tipo de borda:");
-        String borda = scanner.nextLine();
-        
-        System.out.println("Digite o tipo de molho:");
-        String molho = scanner.nextLine();
-        
-        Pizza pizza = new Pizza(preco, new Date(), 0.8, recheio, borda, molho);
-        pedidoAtual.adicionarItem(pizza);
-        System.out.println("Pizza adicionada com sucesso!");
+        pedidoAtual = new Pedido(nomeCliente);
     }
 
     private static void adicionarLanche() {
-        System.out.println("\n=== Adicionar Lanche ===");
-        System.out.println("Digite o preço do lanche:");
-        double preco = scanner.nextDouble();
-        scanner.nextLine(); // Limpar buffer
-        
-        System.out.println("Digite o tipo de pão:");
-        String pao = scanner.nextLine();
-        
-        System.out.println("Digite o recheio:");
-        String recheio = scanner.nextLine();
-        
-        System.out.println("Digite o tipo de molho:");
-        String molho = scanner.nextLine();
-        
-        Lanche lanche = new Lanche(preco, new Date(), 0.3, pao, recheio, molho);
-        pedidoAtual.adicionarItem(lanche);
-        System.out.println("Lanche adicionado com sucesso!");
+        Lanche lanche = Lanche.chamarLanche(scanner);
+        if (lanche != null) {
+            pedidoAtual.adicionarItem(lanche);
+            System.out.println("Lanche adicionado com sucesso!");
+        }
     }
 
     private static void adicionarSalgadinho() {
-        System.out.println("\n=== Adicionar Salgadinho ===");
-        System.out.println("Digite o preço do salgadinho:");
-        double preco = scanner.nextDouble();
-        scanner.nextLine(); // Limpar buffer
-        
-        System.out.println("Digite o tipo de salgadinho:");
-        String tipo = scanner.nextLine();
-        
-        System.out.println("Digite o tipo de massa:");
-        String massa = scanner.nextLine();
-        
-        System.out.println("Digite o recheio:");
-        String recheio = scanner.nextLine();
-        
-        Salgadinho salgadinho = new Salgadinho(preco, new Date(), 0.1, tipo, massa, recheio);
-        pedidoAtual.adicionarItem(salgadinho);
-        System.out.println("Salgadinho adicionado com sucesso!");
+        Salgadinho salgadinho = Salgadinho.chamarSalgadinho(scanner);
+        if (salgadinho != null) {
+            pedidoAtual.adicionarItem(salgadinho);
+            System.out.println("Salgadinho adicionado com sucesso!");
+        }
     }
 
     private static void finalizarPedido() {
         if (pedidoAtual != null) {
-            pedidoAtual.mostrarFatura();
-            
-            System.out.println("\nDigite o valor pago pelo cliente:");
-            double valorPago = scanner.nextDouble();
-            double troco = pedidoAtual.calcularTroco(valorPago);
-            System.out.printf("Troco: %s%n", formatarMoeda(troco));
-            
-            double bonus = vendedor.calcularBonus(pedidoAtual.calcularTotal());
-            System.out.printf("Bônus do vendedor: %s%n", formatarMoeda(bonus));
-            
-            pedidoAtual = null; // Limpa o pedido atual
+            if (pedidoAtual.calcularTotal() == 0) {
+                System.out.println("Nenhum pedido realizado!");
+                pedidoAtual = null; // Limpa o pedido atual
+                iniciarNovoPedido(); // Volta para a função de digitar o nome do cliente
+            } else {
+                pedidoAtual.mostrarFatura();
+                
+                System.out.println("\nDigite o valor pago pelo cliente:");
+                double valorPago = scanner.nextDouble();
+                scanner.nextLine(); // Limpar buffer
+                double troco = pedidoAtual.calcularTroco(valorPago);
+                System.out.printf("Troco: %s%n", formatarMoeda(troco));
+                
+                double bonus = vendedor.calcularBonus(pedidoAtual.calcularTotal());
+                System.out.printf("Bônus do vendedor: %s%n", formatarMoeda(bonus));
+                
+                pedidoAtual = null; // Limpa o pedido atual
+            }
         } else {
             System.out.println("Não há pedido em andamento!");
         }
@@ -157,11 +111,10 @@ public class Main {
 
     private static void mostrarMenu() {
         System.out.println("\n=== MENU ===");
-        System.out.println("1. Adicionar Pizza");
-        System.out.println("2. Adicionar Lanche");
-        System.out.println("3. Adicionar Salgadinho");
-        System.out.println("4. Mostrar Fatura");
-        System.out.println("5. Finalizar Pedido");
+        System.out.println("1. Adicionar Lanche");
+        System.out.println("2. Adicionar Salgadinho");
+        System.out.println("3. Mostrar Fatura");
+        System.out.println("4. Finalizar Pedido");
         System.out.println("0. Sair");
         System.out.print("Escolha uma opção: ");
     }

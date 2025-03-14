@@ -1,30 +1,16 @@
-
-import java.util.Date;
-
-
 // Classe abstrata Prato
-public abstract class Prato {
+public abstract class Prato implements ItemPedido {
     private double precoVenda;
-    private Date dataValidade;
-    private double peso;
 
-    public Prato(double precoVenda, Date dataValidade, double peso) {
+    public Prato(double precoVenda) {
         this.precoVenda = precoVenda;
-        this.dataValidade = dataValidade;
-        this.peso = peso;
     }
 
+    @Override
     public double getPrecoVenda() {
         return precoVenda;
     }
 
-    public Date getDataValidade() {
-        return dataValidade;
-    }
-
-    public double getPeso() {
-        return peso;
-    }
-
+    @Override
     public abstract String descricao();
 }
