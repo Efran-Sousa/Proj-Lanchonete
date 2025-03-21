@@ -46,15 +46,4 @@ public class Pedido {
     public String getNomeCliente() {
         return nomeCliente;
     }
-
-    // Este é o método que está causando o problema
-    public List<ItemPedido> getItensConsumidos() {
-        // Retorna uma cópia defensiva da lista para evitar modificações externas
-        return new ArrayList<>(itensConsumidos);
-    }
-
-    // Método para verificar se a lista está vazia
-    public boolean isEmpty() {
-        return itensConsumidos.isEmpty();
-    }
 }
